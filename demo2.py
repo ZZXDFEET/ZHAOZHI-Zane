@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[9]:
+# In[4]:
 
 
 import pygame
@@ -100,16 +100,16 @@ def draw_board():
                 pygame.draw.circle(screen, CIRCLE_COLOR, center, CELL_SIZE // 2 - 5)
             elif board[x][y] == 2:
                 pygame.draw.circle(screen, CROSS_COLOR, center, CELL_SIZE // 2 - 5)
-                
+
     input_text = FONT.render(f'X: {input_x} Y: {input_y}', True, LINE_COLOR)
     screen.blit(input_text, (WIDTH - 200, HEIGHT - 30))
-
+    
 def valid_move(x, y):
     return 0 <= x < board_size and 0 <= y < board_size and board[x][y] == 0
 
 def move(player, x, y):
     if not valid_move(x, y):
-        show_message(screen, "Invalid move! Cell is occupied.")
+        show_message(screen, "Invalid move!")
         alarm_sound.play()
         return False
     board[x][y] = player
@@ -228,11 +228,17 @@ def game_loop():
                         x = int(input_x) - 1
                         y = int(input_y) - 1
                         if move(current_player, x, y):
+                            step_count += 1
+                            result = check_result(current_player, x, y)
+                            if result:
+                                game_over = True
+                                display_winner(current_player if result != "draw" else "draw")
+                            current_player = 3 - current_player  # Switch player
                             input_x = ''
                             input_y = ''
                             waiting_for_input = False
                     except ValueError:
-                        pass  
+                        pass
                 elif event.key == pygame.K_SPACE:
                     
                     if input_y:
